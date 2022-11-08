@@ -1,0 +1,17 @@
+#! /bin/sh
+
+set -x
+
+# Calculate a safe prefix length
+# Math:
+# (max field length) - (max existing name length) - (single char separator for preffix)
+maxFieldLength=63 # Conservative based on: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names
+longestResourceNameChars=$(yq eval '.metadata.name' /tmp/transfer/manifest.yaml | wc -L)
+safePrefixLength=$(( ${maxFieldLength} - ${longestResourceNameChars} - 1 ))
+
+prefix=$(yq eval '.metadata.name' /input/object.yaml | head -c ${safePrefixLength})
+
+# Prepend all resource names based on the request name
+yq eval -i ".metadata.name |= \"${prefix}-\" + ." /tmp/transfer/manifest.yaml
+
+cp /tmp/transfer/*.yaml /output/

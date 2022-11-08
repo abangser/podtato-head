@@ -1,0 +1,10 @@
+#! /bin/sh
+
+set -x
+
+# update type property in `service` resources
+find /tmp/transfer -type f -name "*.yaml" -print0 | xargs -0 sed -i 's/type: LoadBalancer/type: NodePort/g'
+# update custom serviceType property in Helm values file
+find /tmp/transfer -type f -name "*.yaml" -print0 | xargs -0 sed -i 's/serviceType: LoadBalancer/serviceType: NodePort/g'
+
+cp /tmp/transfer/manifest.yaml /output

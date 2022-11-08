@@ -1,0 +1,5 @@
+apiVersion: promise.example.com/v1
+kind: podtato-head-kubectl
+metadata:
+  name: my-basic-app
+spec:
